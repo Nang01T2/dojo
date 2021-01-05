@@ -10,7 +10,7 @@ using net_core_mssql.Services;
 
 namespace net_core_mssql.Controllers
 {
-  [Authorize]
+  [Authorize(Roles = "Player,Admin")]
   [ApiController]
   [Route("api/[controller]")]
   public class CharacterController : ControllerBase

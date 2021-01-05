@@ -18,7 +18,7 @@ namespace net_core_mssql.Services
     private readonly DataContext context;
     private readonly IHttpContextAccessor httpContextAccessor;
     private int GetUserId() => int.Parse(this.httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
+    private string GetUserRole() => httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
     public CharacterService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor)
     {
       this.httpContextAccessor = httpContextAccessor;
@@ -70,10 +70,15 @@ namespace net_core_mssql.Services
     public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
     {
       ServiceResponse<List<GetCharacterDto>> serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-      List<Character> dbCharacters = await context.Characters
-        .Include(c => c.Weapon)
-        .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
-        .Where(c => c.User.Id == GetUserId()).ToListAsync();
+      List<Character> dbCharacters = GetUserRole().Equals("Admin") ?
+        await context.Characters
+          .Include(c => c.Weapon)
+          .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+          .ToListAsync() :
+        await context.Characters
+          .Include(c => c.Weapon)
+          .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
+          .Where(c => c.User.Id == GetUserId()).ToListAsync();
       serviceResponse.Data = dbCharacters.Select(c => mapper.Map<GetCharacterDto>(c)).ToList();
       return serviceResponse;
     }
