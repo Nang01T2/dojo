@@ -29,6 +29,7 @@ namespace net_core_mssql.Controllers
     }
 
     [HttpPost]
+    //[AllowAnonymous]
     public async Task<IActionResult> AddCharacter(AddCharacterDto newCharacter)
     {
       return Ok(await characterService.AddCharacter(newCharacter));
@@ -62,8 +63,9 @@ namespace net_core_mssql.Controllers
     //[AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
-      int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-      return Ok(await characterService.GetAllCharacters(userId));
+      // int userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+      // return Ok(await characterService.GetAllCharacters(userId));
+      return Ok(await characterService.GetAllCharacters());
     }
   }
 }
