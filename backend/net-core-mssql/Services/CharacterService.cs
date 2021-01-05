@@ -72,6 +72,7 @@ namespace net_core_mssql.Services
       ServiceResponse<List<GetCharacterDto>> serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
       List<Character> dbCharacters = await context.Characters
         .Include(c => c.Weapon)
+        .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
         .Where(c => c.User.Id == GetUserId()).ToListAsync();
       serviceResponse.Data = dbCharacters.Select(c => mapper.Map<GetCharacterDto>(c)).ToList();
       return serviceResponse;
@@ -82,6 +83,7 @@ namespace net_core_mssql.Services
       ServiceResponse<GetCharacterDto> serviceResponse = new ServiceResponse<GetCharacterDto>();
       Character dbCharacter = await context.Characters
                   .Include(c => c.Weapon)
+                  .Include(c => c.CharacterSkills).ThenInclude(cs => cs.Skill)
                   .FirstOrDefaultAsync(c => c.Id == id && c.User.Id == GetUserId());
       serviceResponse.Data = mapper.Map<GetCharacterDto>(dbCharacter);
       return serviceResponse;

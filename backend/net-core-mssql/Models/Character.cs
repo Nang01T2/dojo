@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace net_core_mssql.Models
 {
     public enum RpgClass
@@ -17,6 +19,9 @@ namespace net_core_mssql.Models
         public int Intelligence { get; set; } = 10;
         public RpgClass Class { get; set; } = RpgClass.Knight;
         public User User { get; set; }
+
+        // Character - Weapon: 1-1 relationship, the dependency side is weapon.
         public Weapon Weapon { get; set; }
+        public List<CharacterSkill> CharacterSkills { get; set; }
     }
 }

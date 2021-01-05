@@ -59,6 +59,7 @@ namespace net_core_mssql
       services.AddScoped<ICharacterService, CharacterService>();
       services.AddScoped<IAuthRepository, AuthRepository>();
       services.AddScoped<IWeaponService, WeaponService>();
+      services.AddScoped<ICharacterSkillService, CharacterSkillService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
