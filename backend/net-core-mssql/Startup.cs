@@ -51,14 +51,14 @@ namespace net_core_mssql
       services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddControllers();
       services.AddAutoMapper(typeof(Startup));
-      services.AddScoped<ICharacterService, CharacterService>();
-      services.AddScoped<IAuthRepository, AuthRepository>();
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "net_core_mssql", Version = "v1" });
       });
 
-
+      services.AddScoped<ICharacterService, CharacterService>();
+      services.AddScoped<IAuthRepository, AuthRepository>();
+      services.AddScoped<IWeaponService, WeaponService>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

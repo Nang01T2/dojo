@@ -35,7 +35,7 @@ namespace net_core_mssql.Services
       await context.Characters.AddAsync(character);
       await context.SaveChangesAsync();
 
-      serviceResponse.Data = (context.Characters.Where(c => c.User.Id == GetUserId()).Select(c => mapper.Map<GetCharacterDto>(c))).ToList();
+      serviceResponse.Data = (context.Characters.Include(c => c.Weapon).Where(c => c.User.Id == GetUserId()).Select(c => mapper.Map<GetCharacterDto>(c))).ToList();
       return serviceResponse;
     }
 
@@ -70,7 +70,9 @@ namespace net_core_mssql.Services
     public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
     {
       ServiceResponse<List<GetCharacterDto>> serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-      List<Character> dbCharacters = await context.Characters.Where(c => c.User.Id == GetUserId()).ToListAsync();
+      List<Character> dbCharacters = await context.Characters
+        .Include(c => c.Weapon)
+        .Where(c => c.User.Id == GetUserId()).ToListAsync();
       serviceResponse.Data = dbCharacters.Select(c => mapper.Map<GetCharacterDto>(c)).ToList();
       return serviceResponse;
     }
@@ -78,7 +80,9 @@ namespace net_core_mssql.Services
     public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
     {
       ServiceResponse<GetCharacterDto> serviceResponse = new ServiceResponse<GetCharacterDto>();
-      Character dbCharacter = await context.Characters.FirstOrDefaultAsync(c => c.Id == id && c.User.Id == GetUserId());
+      Character dbCharacter = await context.Characters
+                  .Include(c => c.Weapon)
+                  .FirstOrDefaultAsync(c => c.Id == id && c.User.Id == GetUserId());
       serviceResponse.Data = mapper.Map<GetCharacterDto>(dbCharacter);
       return serviceResponse;
     }
@@ -89,7 +93,10 @@ namespace net_core_mssql.Services
       try
       {
         // So keep that in mind, if you want to access related objects. You might have to include them first.
-        Character character = await context.Characters.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == updatedCharacter.Id);
+        Character character = await context.Characters
+          .Include(c => c.User)
+          .Include(c => c.Weapon)
+          .FirstOrDefaultAsync(c => c.Id == updatedCharacter.Id);
         if (character != null && character.User.Id == GetUserId())
         {
             character.Name = updatedCharacter.Name;
