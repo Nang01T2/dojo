@@ -18,6 +18,10 @@ namespace net_core_mssql.Models
         public int Defense { get; set; } = 10;
         public int Intelligence { get; set; } = 10;
         public RpgClass Class { get; set; } = RpgClass.Knight;
+
+        // The property UserId is necessary because we have to define this foreign key when seeding the data. 
+        public int UserId { get; set; }
+        
         public User User { get; set; }
 
         // Character - Weapon: 1-1 relationship, the dependency side is weapon.

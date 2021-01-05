@@ -47,8 +47,10 @@ namespace net_core_mssql
           };
         });
 
+      services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
+      //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-      services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
       services.AddControllers();
       services.AddAutoMapper(typeof(Startup));
       services.AddSwaggerGen(c =>

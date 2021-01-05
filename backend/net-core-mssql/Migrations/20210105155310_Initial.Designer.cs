@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using net_core_mssql.Data;
@@ -10,44 +9,41 @@ using net_core_mssql.Data;
 namespace net_core_mssql.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210105144629_Role")]
-    partial class Role
+    [Migration("20210105155310_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("net_core_mssql.Models.Character", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Class")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Defense")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("HitPoints")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Intelligence")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Strength")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -59,10 +55,10 @@ namespace net_core_mssql.Migrations
             modelBuilder.Entity("net_core_mssql.Models.CharacterSkill", b =>
                 {
                     b.Property<int>("CharacterId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SkillId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("CharacterId", "SkillId");
 
@@ -75,62 +71,95 @@ namespace net_core_mssql.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Skills");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Damage = 30,
+                            Name = "Fireball"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Damage = 20,
+                            Name = "Frenzy"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Damage = 50,
+                            Name = "Blizzard"
+                        });
                 });
 
             modelBuilder.Entity("net_core_mssql.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("TEXT")
                         .HasDefaultValue("Player");
 
                     b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            PasswordHash = new byte[] { 82, 107, 154, 99, 233, 89, 155, 156, 185, 75, 39, 25, 109, 226, 157, 226, 81, 71, 99, 221, 247, 199, 87, 238, 12, 197, 32, 61, 173, 128, 199, 250, 195, 213, 5, 38, 16, 17, 184, 204, 87, 53, 41, 248, 126, 193, 193, 138, 249, 82, 184, 11, 98, 61, 22, 241, 75, 49, 170, 127, 185, 109, 135, 225 },
+                            PasswordSalt = new byte[] { 240, 8, 119, 103, 218, 31, 239, 179, 66, 4, 123, 93, 6, 24, 69, 86, 170, 31, 246, 250, 225, 42, 15, 13, 101, 238, 180, 231, 161, 43, 237, 72, 3, 212, 142, 140, 211, 87, 181, 21, 163, 230, 6, 107, 154, 174, 151, 78, 162, 87, 91, 174, 205, 126, 11, 201, 121, 124, 30, 111, 208, 7, 222, 45, 51, 66, 19, 170, 111, 11, 93, 218, 204, 232, 85, 232, 218, 92, 188, 136, 152, 53, 255, 73, 200, 53, 126, 55, 189, 237, 53, 64, 247, 124, 168, 97, 170, 220, 187, 87, 201, 198, 104, 119, 136, 182, 98, 187, 71, 208, 40, 197, 50, 31, 119, 136, 208, 200, 75, 77, 47, 106, 174, 144, 172, 65, 111, 241 },
+                            Username = "User1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            PasswordHash = new byte[] { 82, 107, 154, 99, 233, 89, 155, 156, 185, 75, 39, 25, 109, 226, 157, 226, 81, 71, 99, 221, 247, 199, 87, 238, 12, 197, 32, 61, 173, 128, 199, 250, 195, 213, 5, 38, 16, 17, 184, 204, 87, 53, 41, 248, 126, 193, 193, 138, 249, 82, 184, 11, 98, 61, 22, 241, 75, 49, 170, 127, 185, 109, 135, 225 },
+                            PasswordSalt = new byte[] { 240, 8, 119, 103, 218, 31, 239, 179, 66, 4, 123, 93, 6, 24, 69, 86, 170, 31, 246, 250, 225, 42, 15, 13, 101, 238, 180, 231, 161, 43, 237, 72, 3, 212, 142, 140, 211, 87, 181, 21, 163, 230, 6, 107, 154, 174, 151, 78, 162, 87, 91, 174, 205, 126, 11, 201, 121, 124, 30, 111, 208, 7, 222, 45, 51, 66, 19, 170, 111, 11, 93, 218, 204, 232, 85, 232, 218, 92, 188, 136, 152, 53, 255, 73, 200, 53, 126, 55, 189, 237, 53, 64, 247, 124, 168, 97, 170, 220, 187, 87, 201, 198, 104, 119, 136, 182, 98, 187, 71, 208, 40, 197, 50, 31, 119, 136, 208, 200, 75, 77, 47, 106, 174, 144, 172, 65, 111, 241 },
+                            Username = "User2"
+                        });
                 });
 
             modelBuilder.Entity("net_core_mssql.Models.Weapon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CharacterId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
