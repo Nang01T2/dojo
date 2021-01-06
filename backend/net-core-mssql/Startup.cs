@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +19,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using net_core_mssql.Application.Posts;
 using net_core_mssql.Data;
+using net_core_mssql.Infrastructure.JsonPlaceholderApi;
 using net_core_mssql.Services;
 
 namespace net_core_mssql
@@ -51,18 +54,26 @@ namespace net_core_mssql
       services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
       //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-      //services.AddAutoMapper(typeof(Startup));
       services.AddAutoMapper(Assembly.GetExecutingAssembly());
+      services.AddMediatR(Assembly.GetExecutingAssembly());
+      services.AddHttpClient<JsonPlaceholderClient>("JsonPlaceholderClient", config =>
+            {
+              config.BaseAddress = new Uri("https://jsonplaceholder.typicode.com/");
+              config.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+      services.AddTransient<IPostsApi, PostsApi>();
 
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
       services.AddControllers();
-      
+
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "net_core_mssql", Version = "v1" });
       });
       // Make routes globally lowercase.
-      services.AddRouting(options => {
+      services.AddRouting(options =>
+      {
         options.LowercaseUrls = true;
         options.LowercaseQueryStrings = true;
       });
@@ -71,6 +82,8 @@ namespace net_core_mssql
       services.AddScoped<IAuthRepository, AuthRepository>();
       services.AddScoped<IWeaponService, WeaponService>();
       services.AddScoped<ICharacterSkillService, CharacterSkillService>();
+
+
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
