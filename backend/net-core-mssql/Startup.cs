@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -50,12 +51,20 @@ namespace net_core_mssql
       services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("SqliteConnection")));
       //services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+      //services.AddAutoMapper(typeof(Startup));
+      services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
       services.AddControllers();
-      services.AddAutoMapper(typeof(Startup));
+      
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "net_core_mssql", Version = "v1" });
+      });
+      // Make routes globally lowercase.
+      services.AddRouting(options => {
+        options.LowercaseUrls = true;
+        options.LowercaseQueryStrings = true;
       });
 
       services.AddScoped<ICharacterService, CharacterService>();
