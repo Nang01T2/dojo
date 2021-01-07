@@ -11,8 +11,7 @@ namespace net_core_mssql.Infrastructure
     private readonly HttpClient httpClient;
     protected BaseHttpClient(HttpClient httpClient)
     {
-      this.httpClient = httpClient;
-
+      this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
     protected async Task<T> Get<T>(string uri)
@@ -47,11 +46,13 @@ namespace net_core_mssql.Infrastructure
       {
         var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
             .ConfigureAwait(false);
-        var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var responseContent = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
 
-        return string.IsNullOrEmpty(responseContent) ? default : JsonSerializer.Deserialize<T>(responseContent);
+        return await JsonSerializer.DeserializeAsync<T>(responseContent, DefaultJsonSerializerOptions.Options);
+
+        //return string.IsNullOrEmpty(responseContent) ? default : JsonSerializer.Deserialize<T>(responseContent);
       }
       catch (Exception ex) when (ex is ArgumentNullException ||
                                  ex is InvalidOperationException ||
